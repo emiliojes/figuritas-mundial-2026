@@ -8,10 +8,12 @@ import Collection from './pages/Collection';
 import Groups from './pages/Groups';
 import GroupDetail from './pages/GroupDetail';
 import Spares from './pages/Spares';
+import TradeGroups from './pages/TradeGroups';
+import TradeGroupDetail from './pages/TradeGroupDetail';
 
 function Layout({ children }) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f0f2f5]">
       <Navbar />
       <main>{children}</main>
     </div>
@@ -54,6 +56,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Layout><Spares /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/intercambio"
+            element={
+              <ProtectedRoute>
+                <Layout><TradeGroups /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/intercambio/:id"
+            element={
+              <ProtectedRoute>
+                <Layout><TradeGroupDetail /></Layout>
               </ProtectedRoute>
             }
           />

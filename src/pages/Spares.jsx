@@ -1,11 +1,15 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LangContext';
 import { demoGetUser, demoUpdateStickers } from '../lib/demoStore';
 import { SECTIONS } from '../data/stickers';
-import { Repeat2, Search, Minus, Plus } from 'lucide-react';
+import { Repeat2, Search, Minus, Plus, X } from 'lucide-react';
+
+const ALL_STICKERS = SECTIONS.flatMap(s =>
+  s.stickers.map(st => ({ ...st, sectionId: s.id, sectionName: s.name }))
+);
 
 const FLAG_CODE = {
   MEX: 'mx', RSA: 'za', KOR: 'kr', CZE: 'cz',
@@ -34,6 +38,9 @@ export default function Spares() {
   const [stickerMap, setStickerMap] = useState({});
   const [search, setSearch] = useState('');
   const [saving, setSaving] = useState(false);
+  const [modal, setModal]   = useState(false);
+  const [addQ, setAddQ]     = useState('');
+  const inputRef            = useRef(null);
 
   const persist = useCallback(async (updated) => {
     setSaving(true);
@@ -45,6 +52,19 @@ export default function Spares() {
     } catch (e) { console.error(e); }
     setSaving(false);
   }, [user.uid, isDemo]);
+
+  const handleAddSpare = useCallback(async (id) => {
+    const prev    = stickerMap[id];
+    const newQty  = getQty(prev) + 1;
+    const updated = { ...stickerMap };
+    if (typeof prev === 'object' && prev !== null) {
+      updated[id] = { ...prev, q: newQty };
+    } else {
+      updated[id] = { h: prev === 'have' || prev === 'spare' ? 1 : 0, q: newQty, n: 0 };
+    }
+    setStickerMap(updated);
+    await persist(updated);
+  }, [stickerMap, persist]);
 
   const handleDecrement = useCallback(async (id) => {
     const prev = stickerMap[id];
@@ -88,6 +108,16 @@ export default function Spares() {
     load();
   }, [user.uid, isDemo]);
 
+  const openModal = () => { setModal(true); setAddQ(''); setTimeout(() => inputRef.current?.focus(), 80); };
+  const closeModal = () => { setModal(false); setAddQ(''); };
+
+  const addResults = addQ.length > 0
+    ? ALL_STICKERS.filter(st => {
+        const qLow = addQ.toLowerCase();
+        return st.name.toLowerCase().includes(qLow) || st.number.toLowerCase().includes(qLow);
+      }).slice(0, 20)
+    : [];
+
   const q = search.toLowerCase();
 
   const sections = SECTIONS.map(section => ({
@@ -113,7 +143,7 @@ export default function Spares() {
     <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-4 sm:p-5 text-white mb-4 shadow-lg">
+      <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-2xl p-4 sm:p-5 text-white mb-4 shadow-[0_4px_20px_rgba(99,102,241,0.25)]">
         <div className="flex items-center gap-3">
           <Repeat2 className="w-8 h-8 opacity-80" />
           <div>
@@ -135,7 +165,7 @@ export default function Spares() {
           placeholder={t.searchPlaceholder}
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-700 placeholder:text-slate-400"
         />
       </div>
 
@@ -148,44 +178,44 @@ export default function Spares() {
         </div>
       ) : (
         sections.map(({ section, stickers }) => (
-          <div key={section.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-3">
+          <div key={section.id} className="bg-white rounded-2xl shadow-[0_1px_6px_rgba(0,0,0,0.06)] border border-slate-100 overflow-hidden mb-2.5">
             {/* Section header */}
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-50">
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-50">
               {section.id === 'FWC'
                 ? <span className="text-xl">🏆</span>
                 : <img
                     src={`https://flagcdn.com/w40/${FLAG_CODE[section.id] ?? section.id.toLowerCase()}.png`}
                     alt={section.name}
-                    className="w-8 h-6 rounded object-cover border border-gray-100"
+                    className="w-8 h-6 rounded object-cover border border-slate-100"
                     onError={e => { e.target.style.display = 'none'; }}
                   />
               }
-              <span className="font-semibold text-gray-800 text-sm">
+              <span className="font-semibold text-slate-700 text-sm">
                 {teamNames[section.id] ?? section.name}
               </span>
               {section.group && section.group !== 'Intro' && (
-                <span className="text-[10px] bg-blue-100 text-blue-600 font-bold px-1.5 py-0.5 rounded">
+                <span className="text-[10px] bg-indigo-50 text-indigo-500 font-semibold px-1.5 py-0.5 rounded">
                   {t.groupLabel} {section.group}
                 </span>
               )}
-              <span className="ml-auto text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+              <span className="ml-auto text-xs font-semibold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-full">
                 {stickers.reduce((a, s) => a + s.qty, 0)} total
               </span>
             </div>
 
             {/* Stickers list */}
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-slate-50">
               {stickers.map(({ sticker, qty }) => (
                 <div key={sticker.id} className="flex items-center justify-between px-4 py-2">
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-xs font-bold text-gray-500 shrink-0 w-14">{sticker.number}</span>
-                    <span className="text-sm text-gray-700 truncate">{sticker.name}</span>
+                    <span className="text-xs font-semibold text-slate-400 shrink-0 w-14">{sticker.number}</span>
+                    <span className="text-sm text-slate-600 truncate">{sticker.name}</span>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-[10px] text-blue-500 font-medium">
+                    <span className="text-[10px] text-indigo-400 font-medium">
                       {lang === 'en' ? 'spare' : 'repet.'}
                     </span>
-                    <span className="bg-blue-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                    <span className="bg-indigo-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
                       {qty}
                     </span>
                     <button
@@ -208,6 +238,85 @@ export default function Spares() {
             </div>
           </div>
         ))
+      )}
+      {/* ── Floating add button ── */}
+      <button
+        onClick={openModal}
+        className="fixed bottom-6 right-5 w-13 h-13 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-[0_4px_16px_rgba(99,102,241,0.45)] flex items-center justify-center transition-all active:scale-95 z-40"
+        style={{ width: 52, height: 52 }}
+        title={lang === 'en' ? 'Add spare' : 'Agregar repetida'}
+      >
+        <Plus className="w-6 h-6" />
+      </button>
+
+      {/* ── Quick-add modal ── */}
+      {modal && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={closeModal} />
+
+          {/* Panel */}
+          <div className="relative w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl p-4 pb-6 sm:p-5 z-10">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold text-slate-700 text-base">
+                {lang === 'en' ? 'Add spare' : 'Agregar repetida'}
+              </h3>
+              <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 p-1">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Search input */}
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder={lang === 'en' ? 'Search by name or number...' : 'Buscar por nombre o número...'}
+                value={addQ}
+                onChange={e => setAddQ(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-700 placeholder:text-slate-400"
+              />
+            </div>
+
+            {/* Results */}
+            <div className="max-h-64 overflow-y-auto divide-y divide-slate-50 rounded-xl border border-slate-100">
+              {addQ.length === 0 ? (
+                <p className="text-center text-slate-400 text-xs py-8">
+                  {lang === 'en' ? 'Type to search stickers' : 'Escribí para buscar figuritas'}
+                </p>
+              ) : addResults.length === 0 ? (
+                <p className="text-center text-slate-400 text-xs py-8">{t.noResults}</p>
+              ) : (
+                addResults.map(st => {
+                  const qty = getQty(stickerMap[st.id]);
+                  return (
+                    <button
+                      key={st.id}
+                      onClick={() => { handleAddSpare(st.id); }}
+                      className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-indigo-50 transition-colors text-left"
+                    >
+                      <div className="min-w-0">
+                        <span className="text-xs font-semibold text-slate-400 mr-2">{st.number}</span>
+                        <span className="text-sm text-slate-700">{st.name}</span>
+                        <span className="text-xs text-slate-400 ml-1">· {teamNames[st.sectionId] ?? st.sectionName}</span>
+                      </div>
+                      <span className={`shrink-0 ml-2 text-xs font-bold px-2 py-0.5 rounded-full ${
+                        qty > 0 ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-400'
+                      }`}>
+                        {qty > 0 ? `+${qty}` : '+0'}
+                      </span>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+
+            <p className="text-[11px] text-slate-400 text-center mt-3">
+              {lang === 'en' ? 'Tap a sticker to add +1 spare' : 'Tocá una figurita para sumar +1 repetida'}
+            </p>
+          </div>
+        </div>
       )}
     </div>
   );

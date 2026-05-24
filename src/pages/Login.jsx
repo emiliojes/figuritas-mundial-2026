@@ -6,7 +6,7 @@ import { Trophy, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 
 export default function Login() {
   const { login, register, loginWithGoogle } = useAuth();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const navigate = useNavigate();
 
   const [mode, setMode] = useState('login');
@@ -59,16 +59,23 @@ export default function Login() {
     setLoading(false);
   }
 
+  const steps = [
+    { icon: '✏️', text: lang === 'es' ? 'Creá tu cuenta con email o Google' : 'Create your account with email or Google' },
+    { icon: '📋', text: lang === 'es' ? 'Marcá tus figuritas: pegadas, repetidas y las que te faltan' : 'Mark your stickers: glued, spares and needed' },
+    { icon: '🔗', text: lang === 'es' ? 'Entrá a Intercambio → Unirse y escribí el código del grupo de tu clase' : 'Go to Trade → Join and enter your class group code' },
+    { icon: '🎯', text: lang === 'es' ? 'La app te muestra automáticamente con quién podés intercambiar' : 'The app shows you automatically who you can trade with' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-500 via-red-500 to-yellow-500 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-violet-600 to-indigo-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg mb-4">
-            <Trophy className="w-10 h-10 text-orange-500" />
+            <Trophy className="w-10 h-10 text-indigo-600" />
           </div>
           <h1 className="text-3xl font-bold text-white drop-shadow">{t.appName}</h1>
-          <p className="text-orange-100 mt-1">{t.appSub}</p>
+          <p className="text-indigo-200 mt-1">{t.appSub}</p>
         </div>
 
         {/* Card */}
@@ -77,7 +84,7 @@ export default function Login() {
           <div className="flex rounded-xl bg-gray-100 p-1 mb-6">
             <button
               className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${
-                mode === 'login' ? 'bg-white shadow text-orange-600' : 'text-gray-500'
+                mode === 'login' ? 'bg-white shadow text-indigo-600' : 'text-gray-500'
               }`}
               onClick={() => { setMode('login'); setError(''); }}
             >
@@ -85,7 +92,7 @@ export default function Login() {
             </button>
             <button
               className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${
-                mode === 'register' ? 'bg-white shadow text-orange-600' : 'text-gray-500'
+                mode === 'register' ? 'bg-white shadow text-indigo-600' : 'text-gray-500'
               }`}
               onClick={() => { setMode('register'); setError(''); }}
             >
@@ -144,7 +151,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-xl font-semibold text-sm shadow-md hover:from-orange-600 hover:to-red-600 transition-all disabled:opacity-60"
+              className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-3 rounded-xl font-semibold text-sm shadow-md hover:from-indigo-700 hover:to-violet-700 transition-all disabled:opacity-60"
             >
               {loading ? t.loadingBtn : mode === 'login' ? t.enterBtn : t.createBtn}
             </button>
@@ -169,6 +176,21 @@ export default function Login() {
             </svg>
             {t.googleBtn}
           </button>
+        </div>
+
+        {/* How it works */}
+        <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+          <p className="text-white font-semibold text-sm mb-3 text-center">
+            {lang === 'es' ? '¿Cómo funciona?' : 'How does it work?'}
+          </p>
+          <div className="space-y-2">
+            {steps.map((s, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <span className="text-base shrink-0 mt-0.5">{s.icon}</span>
+                <p className="text-indigo-100 text-xs leading-relaxed">{s.text}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

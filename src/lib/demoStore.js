@@ -58,21 +58,30 @@ export function demoUpdateStickers(uid, stickers) {
   }
 }
 
-export function demoCreateGroup(name, creatorUid) {
+export function demoCreateGroup(name, creatorUid, creatorName) {
   const groups = getGroups();
   const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-  const id = 'group_' + Math.random().toString(36).substring(2, 10);
-  groups[id] = { id, name, code, members: [creatorUid], createdBy: creatorUid, createdAt: new Date().toISOString() };
+  const id = code;
+  groups[id] = {
+    id, name, code,
+    owner: creatorUid,
+    members: [creatorUid],
+    memberNames: { [creatorUid]: creatorName || creatorUid },
+    createdAt: new Date().toISOString(),
+  };
   saveGroups(groups);
   return groups[id];
 }
 
-export function demoJoinGroup(code, uid) {
+export function demoJoinGroup(code, uid, memberName) {
   const groups = getGroups();
   const group = Object.values(groups).find(g => g.code === code.toUpperCase());
   if (!group) throw new Error('no-group');
-  if (group.members.includes(uid)) throw new Error('already-member');
-  group.members.push(uid);
+  if (!group.members.includes(uid)) {
+    group.members.push(uid);
+    if (!group.memberNames) group.memberNames = {};
+    group.memberNames[uid] = memberName || uid;
+  }
   saveGroups(groups);
   return group;
 }
@@ -83,6 +92,14 @@ export function demoGetMyGroups(uid) {
 
 export function demoGetGroup(id) {
   return getGroups()[id] || null;
+}
+
+export function demoLeaveGroup(id, uid) {
+  const groups = getGroups();
+  if (!groups[id]) return;
+  groups[id].members = groups[id].members.filter(m => m !== uid);
+  if (groups[id].memberNames) delete groups[id].memberNames[uid];
+  saveGroups(groups);
 }
 
 export function demoGetUsers(uids) {

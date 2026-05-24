@@ -34,30 +34,29 @@ function StickerCard({ sticker, entry, onUpdate }) {
   const needed = getNeeded(entry);
 
   const cardCls = have
-    ? 'bg-green-50 border-green-300 text-green-800'
+    ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
     : needed
-    ? 'bg-red-50 border-red-300 text-red-700'
-    : 'bg-white border-gray-200 text-gray-400';
+    ? 'bg-rose-50 border-rose-200 text-rose-900'
+    : 'bg-white border-slate-200 text-slate-400';
 
   return (
     <div
-      className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl border-2 select-none w-full
-        transition-all duration-150 ${cardCls} ${(have || qty > 0 || needed) ? 'shadow-sm' : ''}`}
+      className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl border select-none w-full
+        transition-all duration-150 ${cardCls} ${(have || qty > 0 || needed) ? 'shadow-sm' : 'opacity-80'}`}
       style={{ minHeight: 72 }}
     >
-      {/* Number + name */}
-      <span className="text-[10px] font-bold leading-tight text-center break-all w-full">
+      <span className="text-[10px] font-semibold leading-tight text-center break-all w-full">
         {sticker.number}
       </span>
-      <span className="text-[9px] leading-tight text-center opacity-60 line-clamp-1 w-full">
+      <span className="text-[9px] leading-tight text-center opacity-50 line-clamp-1 w-full">
         {sticker.name}
       </span>
 
       {/* Pegada toggle */}
       <button
         onClick={() => onUpdate(sticker.id, !have, qty, needed)}
-        className={`w-full mt-0.5 rounded text-[9px] font-bold py-0.5 touch-manipulation transition-colors
-          ${have ? 'bg-green-400 text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}
+        className={`w-full mt-0.5 rounded-md text-[9px] font-semibold py-0.5 touch-manipulation transition-colors
+          ${have ? 'bg-emerald-400/80 text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
       >
         {have ? '✓ Pegada' : '+ Pegar'}
       </button>
@@ -66,22 +65,22 @@ function StickerCard({ sticker, entry, onUpdate }) {
       <div className="flex items-center gap-0.5 mt-0.5">
         <button
           onClick={() => onUpdate(sticker.id, have, Math.max(0, qty - 1), needed)}
-          className="w-4 h-4 rounded text-[10px] font-bold bg-blue-100 hover:bg-blue-200 text-blue-700 flex items-center justify-center leading-none touch-manipulation"
+          className="w-4 h-4 rounded-md text-[10px] font-bold bg-indigo-100 hover:bg-indigo-200 text-indigo-600 flex items-center justify-center leading-none touch-manipulation"
         >−</button>
-        <span className={`text-[10px] font-bold w-5 text-center ${qty > 0 ? 'text-blue-600' : 'text-gray-300'}`}>
+        <span className={`text-[10px] font-bold w-5 text-center ${qty > 0 ? 'text-indigo-500' : 'text-slate-300'}`}>
           {qty > 0 ? `+${qty}` : '0'}
         </span>
         <button
           onClick={() => onUpdate(sticker.id, have, qty + 1, needed)}
-          className="w-4 h-4 rounded text-[10px] font-bold bg-blue-100 hover:bg-blue-200 text-blue-700 flex items-center justify-center leading-none touch-manipulation"
+          className="w-4 h-4 rounded-md text-[10px] font-bold bg-indigo-100 hover:bg-indigo-200 text-indigo-600 flex items-center justify-center leading-none touch-manipulation"
         >+</button>
       </div>
 
       {/* Falta toggle */}
       <button
         onClick={() => onUpdate(sticker.id, have, qty, !needed)}
-        className={`w-full rounded text-[9px] font-bold py-0.5 touch-manipulation transition-colors
-          ${needed ? 'bg-red-400 text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}
+        className={`w-full rounded-md text-[9px] font-semibold py-0.5 touch-manipulation transition-colors
+          ${needed ? 'bg-rose-400/80 text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
       >
         {needed ? '✗ Falta' : '? Falta'}
       </button>
@@ -116,59 +115,59 @@ function SectionBlock({ section, stickers, onUpdate, onBulk, startOpen, t, teamN
   const pct   = Math.round((counts.have / total) * 100);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-3">
+    <div className="bg-white rounded-2xl shadow-[0_1px_6px_rgba(0,0,0,0.06)] border border-slate-100 overflow-hidden mb-2.5">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center gap-3 px-3 py-2.5 sm:px-4 sm:py-3 hover:bg-gray-50 transition-colors text-left"
+        className="w-full flex items-center gap-3 px-3 py-2.5 sm:px-4 sm:py-3 hover:bg-slate-50/70 transition-colors text-left"
       >
         {section.id === 'FWC'
           ? <span className="text-2xl shrink-0">🏆</span>
           : <img
               src={`https://flagcdn.com/w40/${FLAG_CODE[section.id] ?? section.id.toLowerCase()}.png`}
               alt={section.name}
-              className="w-8 h-6 rounded object-cover shrink-0 border border-gray-100"
+              className="w-8 h-6 rounded object-cover shrink-0 border border-slate-100"
               onError={e => { e.target.style.display = 'none'; }}
             />
         }
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-gray-800 text-sm sm:text-base truncate">{teamNames[section.id] ?? section.name}</span>
+            <span className="font-semibold text-slate-700 text-sm sm:text-base truncate">{teamNames[section.id] ?? section.name}</span>
             {section.group && section.group !== 'Intro' && (
-              <span className="text-[10px] bg-orange-100 text-orange-600 font-bold px-1.5 py-0.5 rounded shrink-0">
+              <span className="text-[10px] bg-indigo-50 text-indigo-500 font-semibold px-1.5 py-0.5 rounded shrink-0">
                 {t.groupLabel} {section.group}
               </span>
             )}
           </div>
           <div className="flex items-center gap-2 mt-1">
-            <div className="flex-1 bg-gray-100 rounded-full h-1.5">
-              <div className="bg-green-400 h-1.5 rounded-full transition-all" style={{ width: `${pct}%` }} />
+            <div className="flex-1 bg-slate-100 rounded-full h-1.5">
+              <div className="bg-emerald-400 h-1.5 rounded-full transition-all" style={{ width: `${pct}%` }} />
             </div>
-            <span className="text-[10px] text-gray-400 shrink-0">{counts.have}/{total}</span>
+            <span className="text-[10px] text-slate-400 shrink-0">{counts.have}/{total}</span>
           </div>
         </div>
         <div className="flex gap-1.5 text-[10px] sm:text-xs shrink-0">
-          <span className="bg-green-100 text-green-700 font-bold px-1.5 py-0.5 rounded">{counts.have}✓</span>
-          <span className="bg-blue-100 text-blue-700 font-bold px-1.5 py-0.5 rounded">{counts.spare}↔</span>
-          <span className="bg-red-100 text-red-600 font-bold px-1.5 py-0.5 rounded">{counts.needed}✗</span>
+          <span className="bg-emerald-50 text-emerald-600 font-semibold px-1.5 py-0.5 rounded">{counts.have}✓</span>
+          <span className="bg-indigo-50 text-indigo-500 font-semibold px-1.5 py-0.5 rounded">{counts.spare}+</span>
+          <span className="bg-rose-50 text-rose-500 font-semibold px-1.5 py-0.5 rounded">{counts.needed}!</span>
         </div>
         {open
-          ? <ChevronUp className="w-4 h-4 text-gray-400 shrink-0" />
-          : <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />}
+          ? <ChevronUp className="w-4 h-4 text-slate-400 shrink-0" />
+          : <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />}
       </button>
 
       {/* Bulk action bar */}
-      <div className="px-3 pb-2 sm:px-4 flex items-center gap-1.5 flex-wrap">
-        <span className="text-[10px] text-gray-400 mr-1">{t.markAll}</span>
+      <div className="px-3 pb-2 sm:px-4 flex items-center gap-1.5 flex-wrap border-t border-slate-50">
+        <span className="text-[10px] text-slate-400 mr-1">{t.markAll}</span>
         {[
-          { action: 'have',   label: t.haveIcon,   cls: 'bg-green-500 hover:bg-green-600 text-white' },
-          { action: 'spare',  label: t.spareIcon,  cls: 'bg-blue-500 hover:bg-blue-600 text-white' },
-          { action: 'needed', label: t.neededIcon, cls: 'bg-red-500 hover:bg-red-600 text-white' },
-          { action: 'clear',  label: t.clearIcon,  cls: 'bg-gray-200 hover:bg-gray-300 text-gray-700' },
+          { action: 'have',   label: t.haveIcon,   cls: 'bg-emerald-500 hover:bg-emerald-600 text-white' },
+          { action: 'spare',  label: t.spareIcon,  cls: 'bg-indigo-500 hover:bg-indigo-600 text-white' },
+          { action: 'needed', label: t.neededIcon, cls: 'bg-rose-500 hover:bg-rose-600 text-white' },
+          { action: 'clear',  label: t.clearIcon,  cls: 'bg-slate-100 hover:bg-slate-200 text-slate-600' },
         ].map(({ action, label, cls }) => (
           <button
             key={action}
             onClick={e => { e.stopPropagation(); onBulk(section.id, action); }}
-            className={`px-2 py-0.5 rounded text-[10px] font-bold transition-colors ${cls}`}
+            className={`px-2 py-0.5 rounded-md text-[10px] font-semibold transition-colors ${cls}`}
           >
             {label}
           </button>
@@ -284,47 +283,48 @@ export default function Collection() {
     <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
 
       {/* ── Stats header ── */}
-      <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 sm:p-5 text-white mb-4 shadow-lg">
+      <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-2xl p-4 sm:p-5 text-white mb-4 shadow-[0_4px_20px_rgba(99,102,241,0.25)]">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg sm:text-xl font-bold">{t.albumTitle}</h2>
-            <p className="text-orange-100 text-xs sm:text-sm mt-0.5">{have} {t.albumOf} {TOTAL_STICKERS} {t.albumStickers}</p>
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight">{t.albumTitle}</h2>
+            <p className="text-indigo-200 text-xs sm:text-sm mt-0.5">{have} {t.albumOf} {TOTAL_STICKERS} {t.albumStickers}</p>
           </div>
           <div className="flex gap-3 sm:gap-5 text-center">
-            {[['✅', have, 'Tengo'], ['🔁', spare, 'Sobran'], ['❌', needed, 'Faltan']].map(([icon, n, lbl]) => (
-              <div key={lbl}>
+            {[
+              { n: have,   label: t.statusHave,   color: 'text-emerald-300' },
+              { n: spare,  label: t.statusSpare,  color: 'text-sky-300' },
+              { n: needed, label: t.statusNeeded, color: 'text-rose-300' },
+            ].map(({ n, label, color }) => (
+              <div key={label}>
                 <div className="text-xl sm:text-2xl font-bold">{n}</div>
-                <div className="text-[10px] sm:text-xs text-orange-100">{icon} {lbl}</div>
+                <div className={`text-[10px] sm:text-xs ${color}`}>{label}</div>
               </div>
             ))}
           </div>
         </div>
         <div className="mt-3">
-          <div className="flex justify-between text-[11px] text-orange-100 mb-1">
+          <div className="flex justify-between text-[11px] text-indigo-200 mb-1">
             <span>{t.progress}</span><span>{progress}%</span>
           </div>
-          <div className="bg-orange-400/40 rounded-full h-2.5">
-            <div className="bg-white rounded-full h-2.5 transition-all duration-500" style={{ width: `${progress}%` }} />
+          <div className="bg-white/20 rounded-full h-2">
+            <div className="bg-white/90 rounded-full h-2 transition-all duration-500" style={{ width: `${progress}%` }} />
           </div>
         </div>
       </div>
 
       {/* ── Sticky filter bar ── */}
-      <div className="sticky top-14 z-20 bg-gray-50 pb-2 pt-2 -mx-3 sm:-mx-4 px-3 sm:px-4 border-b border-gray-200 mb-3">
+      <div className="sticky top-14 z-20 bg-[#f0f2f5]/95 backdrop-blur-sm pb-2 pt-2 -mx-3 sm:-mx-4 px-3 sm:px-4 border-b border-slate-200/70 mb-3">
 
-        {/* Group pills — horizontally scrollable */}
-        <div
-          ref={groupBarRef}
-          className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar"
-        >
+        {/* Group pills */}
+        <div ref={groupBarRef} className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
           {groups.map(g => (
             <button
               key={g}
               onClick={() => setGroupFilter(g)}
-              className={`shrink-0 px-2.5 py-1 rounded-full text-xs font-bold transition-colors border whitespace-nowrap ${
+              className={`shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold transition-all border whitespace-nowrap ${
                 groupFilter === g
-                  ? 'bg-gray-800 text-white border-gray-800'
-                  : 'bg-white text-gray-500 border-gray-200'
+                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                  : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
               }`}
             >
               {g === 'all' ? t.groupAll : g === 'Intro' ? `🏆 ${t.groupIntro}` : `Grp ${g}`}
@@ -335,35 +335,35 @@ export default function Collection() {
         {/* Search + status filter */}
         <div className="flex gap-2 mt-2">
           <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-gray-400" />
+            <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-slate-400" />
             <input
               type="text"
               placeholder={t.searchPlaceholder}
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-2 border border-gray-200 rounded-xl text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+              className="w-full pl-8 pr-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-700 placeholder:text-slate-400"
             />
             {search && (
               <button onClick={() => setSearch('')} className="absolute right-2 top-2.5">
-                <X className="w-3.5 h-3.5 text-gray-400" />
+                <X className="w-3.5 h-3.5 text-slate-400" />
               </button>
             )}
           </div>
-          <div className="flex gap-1 sm:gap-1.5">
+          <div className="flex gap-1">
             {[
               { key: 'all',    label: t.filterAll },
-              { key: 'have',   label: '✅'         },
-              { key: 'spare',  label: '🔁'         },
-              { key: 'needed', label: '❌'         },
+              { key: 'have',   label: '✓'         },
+              { key: 'spare',  label: '+N'         },
+              { key: 'needed', label: '!'          },
               { key: 'none',   label: '○'          },
             ].map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => setFilter(key)}
-                className={`px-2.5 py-2 rounded-xl text-xs font-medium border transition-colors ${
+                className={`px-2.5 py-2 rounded-xl text-xs font-semibold border transition-all ${
                   filter === key
-                    ? 'bg-orange-500 text-white border-orange-500'
-                    : 'bg-white text-gray-600 border-gray-200'
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                    : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
                 }`}
               >
                 {label}
@@ -374,11 +374,11 @@ export default function Collection() {
       </div>
 
       {/* ── Legend (compact) ── */}
-      <div className="flex gap-3 text-[11px] text-gray-500 mb-3 flex-wrap">
-        <span className="text-green-600 font-medium">✅ {t.statusHave}</span>
-        <span className="text-blue-600 font-medium">🔁 {t.statusSpare}</span>
-        <span className="text-red-500 font-medium">❌ {t.statusNeeded}</span>
-        <span className="text-gray-400">○ {t.statusNone}</span>
+      <div className="flex gap-3 text-[11px] text-slate-400 mb-3 flex-wrap">
+        <span className="text-emerald-600 font-medium">✓ {t.statusHave}</span>
+        <span className="text-indigo-500 font-medium">+N {t.statusSpare}</span>
+        <span className="text-rose-500 font-medium">! {t.statusNeeded}</span>
+        <span>○ {t.statusNone}</span>
       </div>
 
       {/* ── Sections ── */}
@@ -412,7 +412,7 @@ export default function Collection() {
 
       {/* ── Floating save indicator ── */}
       {saving && (
-        <div className="fixed bottom-5 right-4 bg-gray-800 text-white text-xs px-3 py-2 rounded-full shadow-lg flex items-center gap-1.5 z-50">
+        <div className="fixed bottom-5 right-4 bg-slate-800/90 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-full shadow-lg flex items-center gap-1.5 z-50">
           <RefreshCw className="w-3 h-3 animate-spin" /> {t.saving}
         </div>
       )}
