@@ -1,74 +1,74 @@
-# 🏆 Figuritas Mundial 2026
+# 🏆 FIFA World Cup 2026 Sticker Album Tracker
 
-Aplicación web para gestionar tu álbum de figuritas del **FIFA World Cup 2026** (Panini). Registrá qué figuritas tenés, cuáles te faltan y cuántas repetidas tenés para intercambiar.
+A web app to manage your **FIFA World Cup 2026** Panini sticker album. Track which stickers you have, which ones you need, and how many spares you have to trade.
 
-🌐 **Demo en vivo:** https://enchanting-muffin-0b5838.netlify.app
-
----
-
-## ✨ Funcionalidades
-
-- **Mi Colección** — Visualizá las 979 figuritas oficiales del álbum Panini 2026, organizadas por los 48 equipos y la sección introductoria FWC.
-- **Estado por figurita** — Cada tarjeta tiene controles independientes:
-  - `✓ Pegada` — marcá si ya la pegaste en el álbum
-  - `+N repetidas` — contador de copias extra para intercambiar
-  - `✗ Falta` — marcá si la necesitás
-- **Mis Repetidas** — Vista dedicada con todas las figuritas que tenés de más, agrupadas por equipo. Permite decrementar/incrementar directamente al intercambiar.
-- **Marcar todas** — Botones por sección para marcar en bloque (pegada, repetidas, falta, limpiar).
-- **Filtros** — Filtrá por grupo (A–L), estado y búsqueda por nombre o número.
-- **Grupos del Mundial** — Vista de los 12 grupos con los 4 equipos de cada uno.
-- **Idioma ES/EN** — Toggle en el navbar para cambiar entre español e inglés (persiste en localStorage).
-- **Banderas reales** — Imágenes de banderas via [flagcdn.com](https://flagcdn.com).
+🌐 **Live demo:** https://enchanting-muffin-0b5838.netlify.app
 
 ---
 
-## 🔐 Autenticación
+## ✨ Features
 
-- **Email y contraseña**
+- **My Collection** — Browse all 979 official Panini 2026 stickers, organized by the 48 teams and the FWC intro section.
+- **Per-sticker controls** — Each card has three independent actions:
+  - `✓ Glued` — mark if you've already pasted it in the album
+  - `+N spares` — counter for extra copies available to trade
+  - `✗ Needed` — mark if you're looking for it
+- **My Spares** — Dedicated page listing all your spare stickers grouped by team. Increment or decrement directly as you trade.
+- **Bulk mark** — Buttons per section to mark all stickers at once (glued, spare, needed, clear).
+- **Filters** — Filter by group (A–L), status, or search by name/number.
+- **World Cup Groups** — View of all 12 groups with their 4 teams each.
+- **ES/EN language toggle** — Switch between Spanish and English from the navbar (persisted in localStorage).
+- **Real flags** — Country flag images via [flagcdn.com](https://flagcdn.com).
+
+---
+
+## 🔐 Authentication
+
+- **Email & password**
 - **Google Sign-In** (popup)
-- **Modo demo** — Si no configurás Firebase, los datos se guardan en localStorage del navegador.
+- **Demo mode** — If Firebase is not configured, data is stored in the browser's localStorage.
 
 ---
 
-## 🛠 Stack técnico
+## 🛠 Tech stack
 
-| Tecnología | Uso |
+| Technology | Purpose |
 |---|---|
-| [React 18](https://react.dev) + [Vite](https://vitejs.dev) | Frontend |
-| [TailwindCSS](https://tailwindcss.com) | Estilos |
-| [Firebase Auth](https://firebase.google.com/products/auth) | Autenticación |
-| [Firestore](https://firebase.google.com/products/firestore) | Base de datos |
-| [Lucide React](https://lucide.dev) | Iconos |
-| [Netlify](https://netlify.com) | Deploy |
+| [React 18](https://react.dev) + [Vite](https://vitejs.dev) | Frontend framework |
+| [TailwindCSS](https://tailwindcss.com) | Styling |
+| [Firebase Auth](https://firebase.google.com/products/auth) | Authentication |
+| [Firestore](https://firebase.google.com/products/firestore) | Database |
+| [Lucide React](https://lucide.dev) | Icons |
+| [Netlify](https://netlify.com) | Deployment |
 
 ---
 
-## 🚀 Instalación local
+## 🚀 Local setup
 
 ```bash
-# Clonar el repositorio
+# Clone the repository
 git clone https://github.com/emiliojes/figuritas-mundial-2026.git
 cd figuritas-mundial-2026
 
-# Instalar dependencias
+# Install dependencies
 npm install
 
-# Configurar variables de entorno
+# Set up environment variables
 cp .env.example .env
-# Editar .env con tus credenciales de Firebase
+# Edit .env with your Firebase credentials
 
-# Iniciar servidor de desarrollo
+# Start the development server
 npm run dev
 ```
 
 ---
 
-## 🔧 Configuración de Firebase
+## 🔧 Firebase configuration
 
-1. Crear proyecto en [Firebase Console](https://console.firebase.google.com)
-2. Activar **Authentication** → Email/Password y Google
-3. Crear base de datos **Firestore** en modo test
-4. Copiar la configuración del proyecto en `.env`:
+1. Create a project in the [Firebase Console](https://console.firebase.google.com)
+2. Enable **Authentication** → Email/Password and Google
+3. Create a **Firestore** database in test mode
+4. Copy your project config into `.env`:
 
 ```env
 VITE_FIREBASE_API_KEY=...
@@ -79,30 +79,30 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=...
 VITE_FIREBASE_APP_ID=...
 ```
 
-> ⚠️ El archivo `.env` está en `.gitignore` — nunca se sube al repositorio.
+> ⚠️ The `.env` file is in `.gitignore` — it is never committed to the repository.
 
 ---
 
-## 📁 Estructura del proyecto
+## 📁 Project structure
 
 ```
 src/
 ├── components/
-│   ├── Navbar.jsx          # Barra de navegación con toggle de idioma
-│   └── ProtectedRoute.jsx  # Rutas protegidas por autenticación
+│   ├── Navbar.jsx          # Navigation bar with language toggle
+│   └── ProtectedRoute.jsx  # Auth-protected routes
 ├── context/
-│   ├── AuthContext.jsx     # Autenticación Firebase + demo mode
-│   └── LangContext.jsx     # Internacionalización ES/EN
+│   ├── AuthContext.jsx     # Firebase auth + demo mode
+│   └── LangContext.jsx     # ES/EN i18n context
 ├── data/
-│   └── stickers.js         # Catálogo completo de 979 figuritas
+│   └── stickers.js         # Full catalog of 979 stickers
 ├── lib/
-│   └── demoStore.js        # Almacenamiento local para modo demo
+│   └── demoStore.js        # localStorage store for demo mode
 └── pages/
-    ├── Collection.jsx      # Mi Colección (página principal)
-    ├── Spares.jsx          # Mis Repetidas
-    ├── Groups.jsx          # Grupos del Mundial
-    ├── GroupDetail.jsx     # Detalle de un grupo
-    └── Login.jsx           # Login / Registro
+    ├── Collection.jsx      # My Collection (main page)
+    ├── Spares.jsx          # My Spares
+    ├── Groups.jsx          # World Cup groups overview
+    ├── GroupDetail.jsx     # Single group detail
+    └── Login.jsx           # Login / Register
 ```
 
 ---
@@ -110,16 +110,16 @@ src/
 ## 📦 Scripts
 
 ```bash
-npm run dev      # Servidor de desarrollo
-npm run build    # Build de producción
-npm run preview  # Vista previa del build
+npm run dev      # Start development server
+npm run build    # Production build
+npm run preview  # Preview production build locally
 ```
 
 ---
 
-## 🌍 Deploy
+## 🌍 Deployment
 
-El proyecto está configurado para Netlify con `netlify.toml`. Para redesplegar:
+The project is configured for Netlify via `netlify.toml`. To redeploy:
 
 ```bash
 netlify deploy --prod --dir=dist
@@ -127,6 +127,6 @@ netlify deploy --prod --dir=dist
 
 ---
 
-## 📄 Licencia
+## 📄 License
 
-MIT — libre para uso personal.
+MIT — free for personal use.
