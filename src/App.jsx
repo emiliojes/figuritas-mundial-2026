@@ -10,6 +10,8 @@ import GroupDetail from './pages/GroupDetail';
 import Spares from './pages/Spares';
 import TradeGroups from './pages/TradeGroups';
 import TradeGroupDetail from './pages/TradeGroupDetail';
+import Admin from './pages/Admin';
+import UserProfile from './pages/UserProfile';
 
 function Layout({ children }) {
   return (
@@ -75,6 +77,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <Layout><Admin /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/user/:uid" element={<UserProfile />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

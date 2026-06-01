@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LangContext';
 import { demoGetUser, demoUpdateStickers } from '../lib/demoStore';
 import { SECTIONS, TOTAL_STICKERS } from '../data/stickers';
-import { RefreshCw, ChevronDown, ChevronUp, Search, X } from 'lucide-react';
+import { RefreshCw, ChevronDown, ChevronUp, Search, X, QrCode } from 'lucide-react';
 
 function getHave(val) {
   if (!val) return false;
@@ -54,7 +54,7 @@ function StickerCard({ sticker, entry, onUpdate }) {
 
       {/* Pegada toggle */}
       <button
-        onClick={() => onUpdate(sticker.id, !have, qty, needed)}
+        onClick={() => onUpdate(sticker.id, !have, qty, have ? needed : false)}
         className={`w-full mt-0.5 rounded-md text-[9px] font-semibold py-0.5 touch-manipulation transition-colors
           ${have ? 'bg-emerald-400/80 text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
       >
@@ -78,7 +78,7 @@ function StickerCard({ sticker, entry, onUpdate }) {
 
       {/* Falta toggle */}
       <button
-        onClick={() => onUpdate(sticker.id, have, qty, !needed)}
+        onClick={() => onUpdate(sticker.id, needed ? have : false, qty, !needed)}
         className={`w-full rounded-md text-[9px] font-semibold py-0.5 touch-manipulation transition-colors
           ${needed ? 'bg-rose-400/80 text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
       >
@@ -162,7 +162,6 @@ function SectionBlock({ section, stickers, onUpdate, onBulk, startOpen, t, teamN
           { action: 'have',   label: t.haveIcon,   cls: 'bg-emerald-500 hover:bg-emerald-600 text-white' },
           { action: 'spare',  label: t.spareIcon,  cls: 'bg-indigo-500 hover:bg-indigo-600 text-white' },
           { action: 'needed', label: t.neededIcon, cls: 'bg-rose-500 hover:bg-rose-600 text-white' },
-          { action: 'clear',  label: t.clearIcon,  cls: 'bg-slate-100 hover:bg-slate-200 text-slate-600' },
         ].map(({ action, label, cls }) => (
           <button
             key={action}
@@ -196,18 +195,38 @@ export default function Collection() {
   const [stickerMap, setStickerMap]   = useState({});
   const [saving, setSaving]           = useState(false);
   const [search, setSearch]           = useState('');
-  const [filter, setFilter]           = useState('all');
+  const [filter, setFilter]           = useState('needed');
   const [groupFilter, setGroupFilter] = useState('all');
+  const [showQrModal, setShowQrModal] = useState(false);
   const groupBarRef = useRef(null);
 
   useEffect(() => {
     async function load() {
+      let raw = {};
       if (isDemo) {
         const u = demoGetUser(user.uid);
-        setStickerMap(u?.stickers || {});
+        raw = u?.stickers || {};
       } else {
         const snap = await getDoc(doc(db, 'users', user.uid));
-        setStickerMap(snap.data()?.stickers || {});
+        raw = snap.data()?.stickers || {};
+      }
+      // Migrate: if pegada + falta coexist, pegada wins (clear falta)
+      let dirty = false;
+      const migrated = {};
+      Object.entries(raw).forEach(([k, v]) => {
+        if (v && typeof v === 'object' && v.h && v.n) {
+          migrated[k] = { ...v, n: 0 };
+          dirty = true;
+        } else {
+          migrated[k] = v;
+        }
+      });
+      setStickerMap(migrated);
+      if (dirty) {
+        const toSave = {};
+        Object.entries(migrated).forEach(([k, v]) => { if (v) toSave[k] = v; });
+        if (isDemo) demoUpdateStickers(user.uid, toSave);
+        else updateDoc(doc(db, 'users', user.uid), { stickers: toSave }).catch(console.error);
       }
     }
     load();
@@ -236,6 +255,9 @@ export default function Collection() {
   const handleBulk = useCallback(async (sectionId, action) => {
     const section = SECTIONS.find(s => s.id === sectionId);
     if (!section) return;
+    const actionLabels = { have: 'Tengo', spare: 'Sobran', needed: 'Faltan', clear: 'Limpiar' };
+    const label = actionLabels[action] || action;
+    if (!window.confirm(`¿Marcar todas las figuritas de "${section.name}" como "${label}"?`)) return;
     const updated = { ...stickerMap };
     section.stickers.forEach(st => {
       const prev = updated[st.id];
@@ -284,23 +306,42 @@ export default function Collection() {
 
       {/* ── Stats header ── */}
       <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-2xl p-4 sm:p-5 text-white mb-4 shadow-[0_4px_20px_rgba(99,102,241,0.25)]">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 mb-3">
           <div>
             <h2 className="text-lg sm:text-xl font-bold tracking-tight">{t.albumTitle}</h2>
             <p className="text-indigo-200 text-xs sm:text-sm mt-0.5">{have} {t.albumOf} {TOTAL_STICKERS} {t.albumStickers}</p>
           </div>
-          <div className="flex gap-3 sm:gap-5 text-center">
-            {[
-              { n: have,   label: t.statusHave,   color: 'text-emerald-300' },
-              { n: spare,  label: t.statusSpare,  color: 'text-sky-300' },
-              { n: needed, label: t.statusNeeded, color: 'text-rose-300' },
-            ].map(({ n, label, color }) => (
-              <div key={label}>
-                <div className="text-xl sm:text-2xl font-bold">{n}</div>
-                <div className={`text-[10px] sm:text-xs ${color}`}>{label}</div>
-              </div>
-            ))}
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowQrModal(true)}
+              className="px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-white/20 text-white hover:bg-white/30 transition-all flex items-center gap-1"
+            >
+              <QrCode className="w-4 h-4" />
+              <span className="hidden sm:inline">Compartir</span>
+            </button>
+            <button
+              onClick={() => setFilter(filter === 'needed' ? 'all' : 'needed')}
+              className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                filter === 'needed'
+                  ? 'bg-white text-indigo-600 shadow-md'
+                  : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+            >
+              {filter === 'needed' ? 'Ver todas' : 'Ver solo las que faltan'}
+            </button>
           </div>
+        </div>
+        <div className="flex gap-3 sm:gap-5 text-center mb-3">
+          {[
+            { n: have,   label: t.statusHave,   color: 'text-emerald-300' },
+            { n: spare,  label: t.statusSpare,  color: 'text-sky-300' },
+            { n: needed, label: t.statusNeeded, color: 'text-rose-300' },
+          ].map(({ n, label, color }) => (
+            <div key={label}>
+              <div className="text-xl sm:text-2xl font-bold">{n}</div>
+              <div className={`text-[10px] sm:text-xs ${color}`}>{label}</div>
+            </div>
+          ))}
         </div>
         <div className="mt-3">
           <div className="flex justify-between text-[11px] text-indigo-200 mb-1">
@@ -414,6 +455,38 @@ export default function Collection() {
       {saving && (
         <div className="fixed bottom-5 right-4 bg-slate-800/90 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-full shadow-lg flex items-center gap-1.5 z-50">
           <RefreshCw className="w-3 h-3 animate-spin" /> {t.saving}
+        </div>
+      )}
+
+      {/* ── QR Modal ── */}
+      {showQrModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowQrModal(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-slate-800">Compartir colección</h3>
+              <button onClick={() => setShowQrModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex flex-col items-center">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(window.location.origin + '/user/' + user.uid)}`}
+                alt="QR Code"
+                className="w-48 h-48 mb-4"
+              />
+              <p className="text-sm text-slate-600 text-center mb-4">
+                Escanea este código para ver las figuritas que me faltan y las que tengo repetidas.
+              </p>
+              <a
+                href={`${window.location.origin}/user/${user.uid}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-600 text-sm font-semibold hover:underline"
+              >
+                Abrir enlace directamente
+              </a>
+            </div>
+          </div>
         </div>
       )}
     </div>

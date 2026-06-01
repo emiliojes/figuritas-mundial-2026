@@ -12,6 +12,24 @@ function teamSection(id, name, flag, group, players) {
   };
 }
 
+export function getHave(val) {
+  if (!val) return false;
+  if (typeof val === 'string') return val === 'have' || val === 'spare';
+  return !!val.h;
+}
+
+export function getQty(val) {
+  if (!val) return 0;
+  if (typeof val === 'string') return val === 'spare' ? 1 : 0;
+  return val.q ?? 0;
+}
+
+export function getNeeded(val) {
+  if (!val) return false;
+  if (typeof val === 'string') return val === 'needed';
+  return !!val.n;
+}
+
 export const SECTIONS = [
   {
     id: 'FWC',
@@ -102,28 +120,58 @@ export const SECTIONS = [
   ]),
 
   // ── GRUPO C ────────────────────────────────────────────────────
-  teamSection('USA', 'Estados Unidos', '🇺🇸', 'C', [
+  teamSection('BRA', 'Brasil', '🇧🇷', 'C', [
+    'Escudo (FOIL)', 'Alisson', 'Bento', 'Marquinhos',
+    'Éder Militão', 'Gabriel Magalhães', 'Danilo', 'Wesley',
+    'Lucas Paquetá', 'Casemiro', 'Bruno Guimarães', 'Luiz Henrique',
+    'Foto equipo', 'Vinicius Júnior', 'Rodrygo', 'João Pedro',
+    'Matheus Cunha', 'Gabriel Martinelli', 'Raphinha', 'Estévão',
+  ]),
+  teamSection('MAR', 'Marruecos', '🇲🇦', 'C', [
+    'Escudo (FOIL)', 'Yassine Bounou', 'Munir El Kajoui', 'Achraf Hakimi',
+    'Noussair Mazraoui', 'Nayef Aguerd', 'Roman Saiss', 'Jawad El Yamio',
+    'Adam Masina', 'Sofyan Amrabat', 'Azzedine Ounahi', 'Eliesse Ben Seghir',
+    'Foto equipo', 'Bilal El Khannouss', 'Ismael Saibari', 'Youssef En-Nesyri',
+    'Abde Ezzalzouli', 'Soufiane Rahimi', 'Brahim Diaz', 'Ayoub El Kaabi',
+  ]),
+  teamSection('HAI', 'Haití', '🇭🇹', 'C', [
+    'Escudo (FOIL)', 'Johny Placide', 'Carlens Arcus', 'Martin Expérience',
+    'Jean-Kevin Duverne', 'Ricardo Adé', 'Duke Lacroix', 'Garven Metusala',
+    'Hannes Delcroix', 'Leverton Pierre', 'Danley Jean Jacques', 'Jean-Ricner Bellegarde',
+    'Foto equipo', 'Christopher Attys', 'Derrick Etienne Jr', 'Josue Casimir',
+    'Ruben Providence', 'Duckens Nazon', 'Louicius Deedson', 'Frantzdy Pierrot',
+  ]),
+  teamSection('SCO', 'Escocia', '🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'C', [
+    'Escudo (FOIL)', 'Angus Gunn', 'Jack Hendry', 'Kieran Tierney',
+    'Aaron Hickey', 'Andrew Robertson', 'Scott McKenna', 'John Souttar',
+    'Anthony Ralston', 'Grant Hanley', 'Scott McTominay', 'Billy Gilmour',
+    'Foto equipo', 'Lewis Ferguson', 'Ryan Christie', 'Kenny McLean',
+    'John McGinn', 'Lyndon Dykes', 'Che Adams', 'Ben Gannon-Doak',
+  ]),
+
+  // ── GRUPO D ────────────────────────────────────────────────────
+  teamSection('USA', 'Estados Unidos', '🇺🇸', 'D', [
     'Escudo (FOIL)', 'Matt Freese', 'Chris Richards', 'Tim Ream',
     'Mark McKenzie', 'Alex Freeman', 'Antonee Robinson', 'Tyler Adams',
     'Tanner Tessmann', 'Weston McKennie', 'Christian Roldan', 'Timothy Weah',
     'Foto equipo', 'Diego Luna', 'Malik Tillman', 'Christian Pulisic',
     'Brenden Aaronson', 'Ricardo Pepi', 'Haji Wright', 'Folarin Balogun',
   ]),
-  teamSection('PAR', 'Paraguay', '🇵🇾', 'C', [
+  teamSection('PAR', 'Paraguay', '🇵🇾', 'D', [
     'Escudo (FOIL)', 'Roberto Fernandez', 'Orlando Gill', 'Gustavo Gomez',
     'Fabián Balbuena', 'Juan José Cáceres', 'Omar Alderete', 'Junior Alonso',
     'Mathías Villasanti', 'Diego Gomez', 'Damián Bobadilla', 'Andres Cubas',
     'Foto equipo', 'Matias Galarza Fonda', 'Julio Enciso', 'Alejandro Romero Gamarra',
     'Miguel Almirón', 'Ramon Sosa', 'Angel Romero', 'Antonio Sanabria',
   ]),
-  teamSection('AUS', 'Australia', '🇦🇺', 'C', [
+  teamSection('AUS', 'Australia', '🇦🇺', 'D', [
     'Escudo (FOIL)', 'Mathew Ryan', 'Joe Gauci', 'Harry Souttar',
     'Alessandro Circati', 'Jordan Bos', 'Aziz Behich', 'Cameron Burgess',
     'Lewis Miller', 'Milos Degenek', 'Jackson Irvine', 'Riley McGree',
     'Foto equipo', 'Aiden O\'Neill', 'Connor Metcalfe', 'Patrick Yazbek',
     'Craig Goodwin', 'Kusini Yengi', 'Nestory Irankunda', 'Mohamed Touré',
   ]),
-  teamSection('TUR', 'Türkiye', '🇹🇷', 'C', [
+  teamSection('TUR', 'Türkiye', '🇹🇷', 'D', [
     'Escudo (FOIL)', 'Ugurcan Cakir', 'Mert Muldur', 'Zeki Celik',
     'Abdulkerim Bardakci', 'Caglar Soyuncu', 'Merih Demiral', 'Ferdi Kadioglu',
     'Kaan Ayhan', 'Ismail Yuksek', 'Hakan Calhanoglu', 'Orkun Kokcu',
@@ -131,59 +179,29 @@ export const SECTIONS = [
     'Can Uzun', 'Baris Alper Yilmaz', 'Kerem Akturkoglu', 'Kenan Yildiz',
   ]),
 
-  // ── GRUPO D ────────────────────────────────────────────────────
-  teamSection('NED', 'Países Bajos', '🇳🇱', 'D', [
-    'Escudo (FOIL)', 'Bart Verbruggen', 'Virgil van Dijk', 'Micky van de Ven',
-    'Jurrien Timber', 'Denzel Dumfries', 'Nathan Aké', 'Jeremie Frimpong',
-    'Jan Paul van Hecke', 'Tijjani Reijnders', 'Ryan Gravenberch', 'Teun Koopmeiners',
-    'Foto equipo', 'Frenkie de Jong', 'Xavi Simons', 'Justin Kluivert',
-    'Memphis Depay', 'Donyell Malen', 'Wout Weghorst', 'Cody Gakpo',
-  ]),
-  teamSection('JPN', 'Japón', '🇯🇵', 'D', [
-    'Escudo (FOIL)', 'Zion Suzuki', 'Henry Heroki Mochizuki', 'Ayumu Seko',
-    'Junnosuke Suzuki', 'Shogo Taniguchi', 'Tsuyoshi Watanabe', 'Kaishu Sano',
-    'Yuki Soma', 'Ao Tanaka', 'Daichi Kamada', 'Takefusa Kubo',
-    'Foto equipo', 'Ritsu Doan', 'Keito Nakamura', 'Takumi Minamino',
-    'Shuto Machino', 'Junya Ito', 'Koki Ogawa', 'Ayase Ueda',
-  ]),
-  teamSection('SWE', 'Suecia', '🇸🇪', 'D', [
-    'Escudo (FOIL)', 'Victor Johansson', 'Isak Hien', 'Gabriel Gudmundsson',
-    'Emil Holm', 'Victor Nilsson Lindelöf', 'Gustaf Lagerbielke', 'Lucas Bergvall',
-    'Hugo Larsson', 'Jesper Karlström', 'Yasin Ayari', 'Mattias Svanberg',
-    'Foto equipo', 'Daniel Svensson', 'Ken Sema', 'Roony Bardghji',
-    'Dejan Kulusevski', 'Anthony Elanga', 'Alexander Isak', 'Viktor Gyökeres',
-  ]),
-  teamSection('TUN', 'Túnez', '🇹🇳', 'D', [
-    'Escudo (FOIL)', 'Bechir Ben Said', 'Aymen Dahmen', 'Yan Valery',
-    'Montassar Talbi', 'Yassine Meriah', 'Ali Abdi', 'Dylan Bronn',
-    'Ellyes Skhiri', 'Aissa Laidouni', 'Ferjani Sassi', 'Mohamed Ali Ben Romdhane',
-    'Foto equipo', 'Hannibal Mejbri', 'Elias Achouri', 'Elias Saad',
-    'Hazem Mastouri', 'Ismael Gharbi', 'Sayfallah Ltaief', 'Naim Sliti',
-  ]),
-
   // ── GRUPO E ────────────────────────────────────────────────────
-  teamSection('GER', 'Alemania', '🇩🇪', 'E', [
+  teamSection('GER', 'Alemania', '��', 'E', [
     'Escudo (FOIL)', 'Marc-André ter Stegen', 'Jonathan Tah', 'David Raum',
     'Nico Schlotterbeck', 'Antonio Rüdiger', 'Waldemar Anton', 'Ridle Baku',
     'Maximilian Mittelstadt', 'Joshua Kimmich', 'Florian Wirtz', 'Felix Nmecha',
     'Foto equipo', 'Leon Goretzka', 'Jamal Musiala', 'Serge Gnabry',
     'Kai Havertz', 'Leroy Sane', 'Karim Adeyemi', 'Nick Woltemade',
   ]),
-  teamSection('CUW', 'Curaçao', '🇨🇼', 'E', [
+  teamSection('CUW', 'Curaçao', '��', 'E', [
     'Escudo (FOIL)', 'Eloy Room', 'Armando Obispo', 'Sherel Floranus',
     'Jurien Gaari', 'Joshua Brenet', 'Roshon Van Eijma', 'Shurandy Sambo',
     'Livano Comenencia', 'Godfried Roemeratoe', 'Juninho Bacuna', 'Leandro Bacuna',
     'Foto equipo', 'Tahith Chong', 'Kenji Gorre', 'Jearl Margaritha',
     'Jurgen Locadia', 'Jeremy Antonisse', 'Gervane Kastaneer', 'Sontje Hansen',
   ]),
-  teamSection('CIV', 'Costa de Marfil', '🇨🇮', 'E', [
+  teamSection('CIV', 'Costa de Marfil', '��', 'E', [
     'Escudo (FOIL)', 'Yahia Fofana', 'Ghislain Konan', 'Wilfried Singo',
     'Odilon Kossounou', 'Evan Ndicka', 'Willy Boly', 'Emmanuel Agbadou',
     'Ousmane Diomande', 'Franck Kessie', 'Seko Fofana', 'Ibrahim Sangare',
     'Foto equipo', 'Jean-Philippe Gbamin', 'Amad Diallo', 'Sébastien Haller',
     'Simon Adingra', 'Yan Diomande', 'Evann Guessand', 'Oumar Diakite',
   ]),
-  teamSection('ECU', 'Ecuador', '🇪🇨', 'E', [
+  teamSection('ECU', 'Ecuador', '��', 'E', [
     'Escudo (FOIL)', 'Hernán Galíndez', 'Gonzalo Valle', 'Piero Hincapié',
     'Pervis Estupiñán', 'Willian Pacho', 'Ángelo Preciado', 'Joel Ordóñez',
     'Moises Caicedo', 'Alan Franco', 'Kendry Paez', 'Pedro Vite',
@@ -192,28 +210,58 @@ export const SECTIONS = [
   ]),
 
   // ── GRUPO F ────────────────────────────────────────────────────
-  teamSection('BEL', 'Bélgica', '🇧🇪', 'F', [
+  teamSection('NED', 'Países Bajos', '��', 'F', [
+    'Escudo (FOIL)', 'Bart Verbruggen', 'Virgil van Dijk', 'Micky van de Ven',
+    'Jurrien Timber', 'Denzel Dumfries', 'Nathan Aké', 'Jeremie Frimpong',
+    'Jan Paul van Hecke', 'Tijjani Reijnders', 'Ryan Gravenberch', 'Teun Koopmeiners',
+    'Foto equipo', 'Frenkie de Jong', 'Xavi Simons', 'Justin Kluivert',
+    'Memphis Depay', 'Donyell Malen', 'Wout Weghorst', 'Cody Gakpo',
+  ]),
+  teamSection('JPN', 'Japón', '��', 'F', [
+    'Escudo (FOIL)', 'Zion Suzuki', 'Henry Heroki Mochizuki', 'Ayumu Seko',
+    'Junnosuke Suzuki', 'Shogo Taniguchi', 'Tsuyoshi Watanabe', 'Kaishu Sano',
+    'Yuki Soma', 'Ao Tanaka', 'Daichi Kamada', 'Takefusa Kubo',
+    'Foto equipo', 'Ritsu Doan', 'Keito Nakamura', 'Takumi Minamino',
+    'Shuto Machino', 'Junya Ito', 'Koki Ogawa', 'Ayase Ueda',
+  ]),
+  teamSection('SWE', 'Suecia', '��', 'F', [
+    'Escudo (FOIL)', 'Victor Johansson', 'Isak Hien', 'Gabriel Gudmundsson',
+    'Emil Holm', 'Victor Nilsson Lindelöf', 'Gustaf Lagerbielke', 'Lucas Bergvall',
+    'Hugo Larsson', 'Jesper Karlström', 'Yasin Ayari', 'Mattias Svanberg',
+    'Foto equipo', 'Daniel Svensson', 'Ken Sema', 'Roony Bardghji',
+    'Dejan Kulusevski', 'Anthony Elanga', 'Alexander Isak', 'Viktor Gyökeres',
+  ]),
+  teamSection('TUN', 'Túnez', '��', 'F', [
+    'Escudo (FOIL)', 'Bechir Ben Said', 'Aymen Dahmen', 'Yan Valery',
+    'Montassar Talbi', 'Yassine Meriah', 'Ali Abdi', 'Dylan Bronn',
+    'Ellyes Skhiri', 'Aissa Laidouni', 'Ferjani Sassi', 'Mohamed Ali Ben Romdhane',
+    'Foto equipo', 'Hannibal Mejbri', 'Elias Achouri', 'Elias Saad',
+    'Hazem Mastouri', 'Ismael Gharbi', 'Sayfallah Ltaief', 'Naim Sliti',
+  ]),
+
+  // ── GRUPO G ────────────────────────────────────────────────────
+  teamSection('BEL', 'Bélgica', '🇧🇪', 'G', [
     'Escudo (FOIL)', 'Thibaut Courtois', 'Arthur Theate', 'Timothy Castagne',
     'Zeno Debast', 'Brandon Mechele', 'Maxim De Cuyper', 'Thomas Meunier',
     'Youri Tielemans', 'Amadou Onana', 'Nicolas Raskin', 'Alexis Saelemaekers',
     'Foto equipo', 'Hans Vanaken', 'Kevin De Bruyne', 'Jérémy Doku',
     'Charles De Ketelaere', 'Leandro Trossard', 'Loïs Openda', 'Romelu Lukaku',
   ]),
-  teamSection('EGY', 'Egipto', '🇪🇬', 'F', [
+  teamSection('EGY', 'Egipto', '🇪🇬', 'G', [
     'Escudo (FOIL)', 'Mohamed El Shenawy', 'Mohamed Hany', 'Mohamed Hamdy',
     'Yasser Ibrahim', 'Khaled Sobhi', 'Ramy Rabia', 'Hossam Abdelmaguid',
     'Ahmed Fatouh', 'Marwan Attia', 'Zizo', 'Hamdy Fathy',
     'Foto equipo', 'Mohamed Lasheen', 'Emam Ashour', 'Osama Faisal',
     'Mohamed Salah', 'Mostafa Mohamed', 'Trezeguet', 'Omar Marmoush',
   ]),
-  teamSection('IRN', 'IR Irán', '🇮🇷', 'F', [
+  teamSection('IRN', 'IR Irán', '🇮🇷', 'G', [
     'Escudo (FOIL)', 'Alireza Beiranvand', 'Morteza Pouraliganji', 'Ehsan Hajsafi',
     'Milad Mohammadi', 'Shojae Khalilzadeh', 'Ramin Rezaeian', 'Hossein Kanaani',
     'Sadegh Moharrami', 'Saleh Hardani', 'Saeed Ezatolahi', 'Saman Ghoddos',
     'Foto equipo', 'Omid Noorafkan', 'Roozbeh Cheshmi', 'Mohammad Mohebi',
     'Sardar Azmoun', 'Mehdi Taremi', 'Alireza Jahanbakhsh', 'Ali Gholizadeh',
   ]),
-  teamSection('NZL', 'Nueva Zelanda', '🇳🇿', 'F', [
+  teamSection('NZL', 'Nueva Zelanda', '🇳🇿', 'G', [
     'Escudo (FOIL)', 'Max Crocombe', 'Alex Paulsen', 'Michael Boxall',
     'Liberato Cacace', 'Tim Payne', 'Tyler Bindon', 'Francis de Vries',
     'Finn Surman', 'Joe Bell', 'Sarpreet Singh', 'Ryan Thomas',
@@ -221,64 +269,34 @@ export const SECTIONS = [
     'Chris Wood', 'Elijah Just', 'Callum McCowatt', 'Kosta Barbarouses',
   ]),
 
-  // ── GRUPO G ────────────────────────────────────────────────────
-  teamSection('ESP', 'España', '🇪🇸', 'G', [
+  // ── GRUPO H ────────────────────────────────────────────────────
+  teamSection('ESP', 'España', '🇪🇸', 'H', [
     'Escudo (FOIL)', 'Unai Simon', 'Robin Le Normand', 'Aymeric Laporte',
     'Dean Huijsen', 'Pedro Porro', 'Dani Carvajal', 'Marc Cucurella',
     'Martín Zubimendi', 'Rodri', 'Pedri', 'Fabian Ruiz',
     'Foto equipo', 'Mikel Merino', 'Lamine Yamal', 'Dani Olmo',
     'Nico Williams', 'Ferran Torres', 'Álvaro Morata', 'Mikel Oyarzabal',
   ]),
-  teamSection('CPV', 'Cabo Verde', '🇨🇻', 'G', [
+  teamSection('CPV', 'Cabo Verde', '🇨🇻', 'H', [
     'Escudo (FOIL)', 'Vozinha', 'Logan Costa', 'Pico',
     'Diney', 'Steven Moreira', 'Wagner Pina', 'Joao Paulo',
     'Yannick Semedo', 'Kevin Pina', 'Patrick Andrade', 'Jamiro Monteiro',
     'Foto equipo', 'Deroy Duarte', 'Garry Rodrigues', 'Jovane Cabral',
     'Ryan Mendes', 'Dailon Livramento', 'Willy Semedo', 'Bebe',
   ]),
-  teamSection('KSA', 'Arabia Saudita', '🇸🇦', 'G', [
+  teamSection('KSA', 'Arabia Saudita', '🇸🇦', 'H', [
     'Escudo (FOIL)', 'Nawaf Alaqidi', 'Abdulrahman Al-Sanbi', 'Saud Abdulhamid',
     'Nawaf Bouwashl', 'Jihad Thakri', 'Moteb Al-Harbi', 'Hassan Altambakti',
     'Musab Aljuwayr', 'Ziyad Aljohani', 'Abdullah Alkhaibari', 'Nasser Aldawsari',
     'Foto equipo', 'Saleh Abu Alshamat', 'Marwan Alsahafi', 'Salem Aldawsari',
     'Abdulrahman Al-Aboud', 'Feras Akbrikan', 'Saleh Alshehri', 'Abdullah Al-Hamdan',
   ]),
-  teamSection('URU', 'Uruguay', '🇺🇾', 'G', [
+  teamSection('URU', 'Uruguay', '🇺🇾', 'H', [
     'Escudo (FOIL)', 'Sergio Rochet', 'Santiago Mele', 'Ronald Araujo',
     'José María Giménez', 'Sebastian Caceres', 'Mathias Olivera', 'Guillermo Varela',
     'Nahitan Nandez', 'Federico Valverde', 'Giorgian De Arrascaeta', 'Rodrigo Bentancur',
     'Foto equipo', 'Manuel Ugarte', 'Nicolás de la Cruz', 'Maxi Araujo',
     'Darwin Núñez', 'Federico Viñas', 'Rodrigo Aguirre', 'Facundo Pellistri',
-  ]),
-
-  // ── GRUPO H ────────────────────────────────────────────────────
-  teamSection('POR', 'Portugal', '🇵🇹', 'H', [
-    'Escudo (FOIL)', 'Diogo Costa', 'Jose Sa', 'Ruben Dias',
-    'João Cancelo', 'Diogo Dalot', 'Nuno Mendes', 'Gonçalo Inácio',
-    'Bernardo Silva', 'Bruno Fernandes', 'Ruben Neves', 'Vitinha',
-    'Foto equipo', 'João Neves', 'Cristiano Ronaldo', 'Francisco Trincao',
-    'João Felix', 'Gonçalo Ramos', 'Pedro Neto', 'Rafael Leão',
-  ]),
-  teamSection('COD', 'Congo DR', '🇨🇩', 'H', [
-    'Escudo (FOIL)', 'Lionel Mpasi', 'Aaron Wan-Bissaka', 'Axel Tuanzebe',
-    'Arthur Masuaku', 'Chancel Mbemba', 'Joris Kayembe', 'Charles Pickel',
-    'Ngal\'ayel Mukau', 'Edo Kayembe', 'Samuel Moutoussamy', 'Noah Sadiki',
-    'Foto equipo', 'Théo Bongonda', 'Meschak Elia', 'Yoane Wissa',
-    'Brian Cipenga', 'Fiston Mayele', 'Cédric Bakambu', 'Nathanaël Mbuku',
-  ]),
-  teamSection('UZB', 'Uzbekistán', '🇺🇿', 'H', [
-    'Escudo (FOIL)', 'Utkir Yusupov', 'Farrukh Savfiev', 'Sherzod Nasrullaev',
-    'Umar Eshmurodov', 'Husniddin Aliqulov', 'Rustamjon Ashurmatov', 'Khojiakbar Alijonov',
-    'Abdukodir Khusanov', 'Odiljon Hamrobekov', 'Otabek Shukurov', 'Jamshid Iskanderov',
-    'Foto equipo', 'Azizbek Turgunboev', 'Khojimat Erkinov', 'Eldor Shomurodov',
-    'Oston Urunov', 'Jaloliddin Masharipov', 'Igor Sergeev', 'Abbosbek Fayzullaev',
-  ]),
-  teamSection('COL', 'Colombia', '🇨🇴', 'H', [
-    'Escudo (FOIL)', 'Camilo Vargas', 'David Ospina', 'Dávinson Sánchez',
-    'Yerry Mina', 'Daniel Munoz', 'Johan Mojica', 'Jhon Lucumí',
-    'Santiago Arias', 'Jefferson Lerma', 'Kevin Castaño', 'Richard Rios',
-    'Foto equipo', 'James Rodriguez', 'Juan Fernando Quintero', 'Jorge Carrascal',
-    'Jon Arias', 'Jhon Cordova', 'Luis Suarez', 'Luis Diaz',
   ]),
 
   // ── GRUPO I ────────────────────────────────────────────────────
@@ -342,63 +360,63 @@ export const SECTIONS = [
   ]),
 
   // ── GRUPO K ────────────────────────────────────────────────────
-  teamSection('ENG', 'Inglaterra', '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'K', [
+  teamSection('POR', 'Portugal', '�🇹', 'K', [
+    'Escudo (FOIL)', 'Diogo Costa', 'Jose Sa', 'Ruben Dias',
+    'João Cancelo', 'Diogo Dalot', 'Nuno Mendes', 'Gonçalo Inácio',
+    'Bernardo Silva', 'Bruno Fernandes', 'Ruben Neves', 'Vitinha',
+    'Foto equipo', 'João Neves', 'Cristiano Ronaldo', 'Francisco Trincao',
+    'João Felix', 'Gonçalo Ramos', 'Pedro Neto', 'Rafael Leão',
+  ]),
+  teamSection('COD', 'Congo DR', '��', 'K', [
+    'Escudo (FOIL)', 'Lionel Mpasi', 'Aaron Wan-Bissaka', 'Axel Tuanzebe',
+    'Arthur Masuaku', 'Chancel Mbemba', 'Joris Kayembe', 'Charles Pickel',
+    'Ngal\'ayel Mukau', 'Edo Kayembe', 'Samuel Moutoussamy', 'Noah Sadiki',
+    'Foto equipo', 'Théo Bongonda', 'Meschak Elia', 'Yoane Wissa',
+    'Brian Cipenga', 'Fiston Mayele', 'Cédric Bakambu', 'Nathanaël Mbuku',
+  ]),
+  teamSection('UZB', 'Uzbekistán', '��', 'K', [
+    'Escudo (FOIL)', 'Utkir Yusupov', 'Farrukh Savfiev', 'Sherzod Nasrullaev',
+    'Umar Eshmurodov', 'Husniddin Aliqulov', 'Rustamjon Ashurmatov', 'Khojiakbar Alijonov',
+    'Abdukodir Khusanov', 'Odiljon Hamrobekov', 'Otabek Shukurov', 'Jamshid Iskanderov',
+    'Foto equipo', 'Azizbek Turgunboev', 'Khojimat Erkinov', 'Eldor Shomurodov',
+    'Oston Urunov', 'Jaloliddin Masharipov', 'Igor Sergeev', 'Abbosbek Fayzullaev',
+  ]),
+  teamSection('COL', 'Colombia', '��', 'K', [
+    'Escudo (FOIL)', 'Camilo Vargas', 'David Ospina', 'Dávinson Sánchez',
+    'Yerry Mina', 'Daniel Munoz', 'Johan Mojica', 'Jhon Lucumí',
+    'Santiago Arias', 'Jefferson Lerma', 'Kevin Castaño', 'Richard Rios',
+    'Foto equipo', 'James Rodriguez', 'Juan Fernando Quintero', 'Jorge Carrascal',
+    'Jon Arias', 'Jhon Cordova', 'Luis Suarez', 'Luis Diaz',
+  ]),
+
+  // ── GRUPO L ────────────────────────────────────────────────────
+  teamSection('ENG', 'Inglaterra', '🏴󠁧󠁢���󠁿', 'L', [
     'Escudo (FOIL)', 'Jordan Pickford', 'John Stones', 'Marc Guéhi',
     'Ezri Konsa', 'Trent Alexander-Arnold', 'Reece James', 'Dan Burn',
     'Jordan Henderson', 'Declan Rice', 'Jude Bellingham', 'Cole Palmer',
     'Foto equipo', 'Morgan Rogers', 'Anthony Gordon', 'Phil Foden',
     'Bukayo Saka', 'Harry Kane', 'Marcus Rashford', 'Ollie Watkins',
   ]),
-  teamSection('CRO', 'Croacia', '🇭🇷', 'K', [
+  teamSection('CRO', 'Croacia', '�🇷', 'L', [
     'Escudo (FOIL)', 'Dominik Livaković', 'Duje Caleta-Car', 'Josko Gvardiol',
     'Josip Stanišić', 'Luka Vušković', 'Josip Sutalo', 'Kristijan Jakic',
     'Luka Modrić', 'Mateo Kovacic', 'Martin Baturina', 'Lovro Majer',
     'Foto equipo', 'Mario Pasalic', 'Petar Sucic', 'Ivan Perišić',
     'Marco Pasalic', 'Ante Budimir', 'Andrej Kramarić', 'Franjo Ivanovic',
   ]),
-  teamSection('GHA', 'Ghana', '🇬🇭', 'K', [
+  teamSection('GHA', 'Ghana', '🇬🇭', 'L', [
     'Escudo (FOIL)', 'Lawrence Ati Zigi', 'Tariq Lamptey', 'Mohammed Salisu',
     'Alidu Seidu', 'Alexander Djiku', 'Gideon Mensah', 'Caleb Yirenkyi',
     'Abdul Issahaku Fatawu', 'Thomas Partey', 'Salis Abdul Samed', 'Kamaldeen Sulemana',
     'Foto equipo', 'Mohammed Kudus', 'Inaki Williams', 'Jordan Ayew',
     'Andrew Ayew', 'Joseph Paintsil', 'Osman Bukari', 'Antoine Semenyo',
   ]),
-  teamSection('PAN', 'Panamá', '🇵🇦', 'K', [
+  teamSection('PAN', 'Panamá', '�🇦', 'L', [
     'Escudo (FOIL)', 'Orlando Mosquera', 'Luis Mejia', 'Fidel Escobar',
     'Andres Andrade', 'Michael Amir Murillo', 'Eric Davis', 'Jose Cordoba',
     'Cesar Blackman', 'Cristian Martinez', 'Aníbal Godoy', 'Adalberto Carrasquilla',
     'Foto equipo', 'Édgar Bárcenas', 'Carlos Harvey', 'Ismael Díaz',
     'Jose Fajardo', 'Cecilio Waterman', 'Jose Luiz Rodriguez', 'Alberto Quintero',
-  ]),
-
-  // ── GRUPO L ────────────────────────────────────────────────────
-  teamSection('SCO', 'Escocia', '🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'L', [
-    'Escudo (FOIL)', 'Angus Gunn', 'Jack Hendry', 'Kieran Tierney',
-    'Aaron Hickey', 'Andrew Robertson', 'Scott McKenna', 'John Souttar',
-    'Anthony Ralston', 'Grant Hanley', 'Scott McTominay', 'Billy Gilmour',
-    'Foto equipo', 'Lewis Ferguson', 'Ryan Christie', 'Kenny McLean',
-    'John McGinn', 'Lyndon Dykes', 'Che Adams', 'Ben Gannon-Doak',
-  ]),
-  teamSection('BRA', 'Brasil', '🇧🇷', 'L', [
-    'Escudo (FOIL)', 'Alisson', 'Bento', 'Marquinhos',
-    'Éder Militão', 'Gabriel Magalhães', 'Danilo', 'Wesley',
-    'Lucas Paquetá', 'Casemiro', 'Bruno Guimarães', 'Luiz Henrique',
-    'Foto equipo', 'Vinicius Júnior', 'Rodrygo', 'João Pedro',
-    'Matheus Cunha', 'Gabriel Martinelli', 'Raphinha', 'Estévão',
-  ]),
-  teamSection('HAI', 'Haití', '🇭🇹', 'L', [
-    'Escudo (FOIL)', 'Johny Placide', 'Carlens Arcus', 'Martin Expérience',
-    'Jean-Kevin Duverne', 'Ricardo Adé', 'Duke Lacroix', 'Garven Metusala',
-    'Hannes Delcroix', 'Leverton Pierre', 'Danley Jean Jacques', 'Jean-Ricner Bellegarde',
-    'Foto equipo', 'Christopher Attys', 'Derrick Etienne Jr', 'Josue Casimir',
-    'Ruben Providence', 'Duckens Nazon', 'Louicius Deedson', 'Frantzdy Pierrot',
-  ]),
-  teamSection('MAR', 'Marruecos', '🇲🇦', 'L', [
-    'Escudo (FOIL)', 'Yassine Bounou', 'Munir El Kajoui', 'Achraf Hakimi',
-    'Noussair Mazraoui', 'Nayef Aguerd', 'Roman Saiss', 'Jawad El Yamio',
-    'Adam Masina', 'Sofyan Amrabat', 'Azzedine Ounahi', 'Eliesse Ben Seghir',
-    'Foto equipo', 'Bilal El Khannouss', 'Ismael Saibari', 'Youssef En-Nesyri',
-    'Abde Ezzalzouli', 'Soufiane Rahimi', 'Brahim Diaz', 'Ayoub El Kaabi',
   ]),
 ];
 
